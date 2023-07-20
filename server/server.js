@@ -4,7 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const { PORT, NODE_ENV, API_URL } = require("./config/constants");
 const connectDB = require("./config/db");
-const userRouter = require("./routes/user.routes");
+const userRouter = require("./routes/auth.routes");
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.use(morgan("dev")); //logging
 connectDB();
 
 //routes
-app.use(`${API_URL}/users`, userRouter);
+app.use(`${API_URL}/auth`, userRouter);
 
 //server static files in production
 if (NODE_ENV === "production") {

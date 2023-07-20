@@ -7,13 +7,17 @@ const userSchema = mongoose.Schema(
       required: [true, "Please enter a name."],
     },
     email: {
-      type: String,
+        type: String,
+        unique: true,
       required: [true, "Please enter an email."],
     },
 
     password: {
       type: String,
       required: [true, "Please enter a password."],
+    },
+    refreshToken: {
+      type: String,
     },
   },
   { timestamps: true }
