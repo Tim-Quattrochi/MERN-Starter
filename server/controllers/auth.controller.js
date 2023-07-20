@@ -1,6 +1,4 @@
-const { JWT_SECRET } = require("../config/constants");
 const {
-  createToken,
   createAccessToken,
   createRefreshToken,
 } = require("../config/createToken");
@@ -53,6 +51,10 @@ const login = async (req, res) => {
 const signup = async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
+  if (password !== confirmPassword) {
+    return res.status(400).json({ error: "Passwords must match." });
+  }
+
   try {
     const user = await User.findOne({ email });
 
@@ -70,13 +72,13 @@ const signup = async (req, res) => {
 
     const payload = { id: newUser._id, email: newUser.email };
     console.log(payload);
-    const token = createAccessToken(payload);
+    const accessToken = createAccessToken(payload);
 
     newUser = newUser.toJSON();
     delete newUser.password;
     delete newUser.__v;
 
-    newUser = { ...newUser, token: token };
+    newUser = { ...newUser, accessToken };
 
     res.status(201).json(newUser);
   } catch (error) {
