@@ -2,6 +2,7 @@ const dotenv = require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 const { PORT, NODE_ENV, API_URL } = require("./config/constants");
 const connectDB = require("./config/db");
 const userRouter = require("./routes/auth.routes");
@@ -11,6 +12,7 @@ const app = express();
 //Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev")); //logging
 
