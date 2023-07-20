@@ -4,7 +4,12 @@ const {
 } = require("../config/createToken");
 const createCookie = require("../config/createCookie");
 const User = require("../models/user.model");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const {
+  REFRESH_TOKEN_SECRET,
+  APP_NAME,
+} = require("../config/constants");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -86,4 +91,46 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+const refresh = async (req, res) => {
+  try {
+    const cookies = req.cookies;
+
+    if (!cookies[APP_NAME]) {
+      return res.status(401).json({ error: "Refresh token not found in cookies." });
+    }
+
+    const refreshToken = cookies[APP_NAME];
+    const user = await User.findOne({ refreshToken });
+
+    jwt.verify(
+      refreshToken,
+      REFRESH_TOKEN_SECRET,
+      async (err, decoded) => {
+        if (err || user.email !== decoded.email) {
+          return res.status(403).json({ error: "Invalid refresh token or credentials mismatch." });
+        }
+      }
+    );
+
+    const payload = { id: user._id, email: user.email };
+    const accessToken = createAccessToken(payload);
+
+    return res.status(200).json({accessToken: accessToken});
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+};
+
+const list = async (req, res) => {
+  try {
+      res.status(200).json({ list: [1, 2, 3, 4, 5] });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+
+};
+
+
+module.exports = { signup, login, refresh, list };

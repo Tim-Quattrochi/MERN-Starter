@@ -1,6 +1,13 @@
 const express = require("express");
-const { signup, login } = require("../controllers/auth.controller");
+const {
+  signup,
+  login,
+  refresh,
+  list,
+} = require("../controllers/auth.controller");
+const VerifyJWT = require("../middleware/VerifyJWT");
 const validateReqBody = require("../middleware/validateReqBody");
+const rateLimiter = require("../middleware/rateLimiter");
 
 const userRouter = express.Router();
 
@@ -11,8 +18,12 @@ userRouter.post(
 );
 userRouter.post(
   "/login",
+  rateLimiter,
   validateReqBody("email", "password"),
   login
 );
+
+userRouter.get("/refresh", rateLimiter, refresh);
+userRouter.get("/list", VerifyJWT, list);
 
 module.exports = userRouter;
