@@ -23,7 +23,6 @@ const login = async (req, res) => {
     }
 
     const payload = { id: user._id, email: user.email };
-    console.log(payload);
 
     const accessToken = createAccessToken(payload);
 
@@ -71,7 +70,7 @@ const signup = async (req, res) => {
     });
 
     const payload = { id: newUser._id, email: newUser.email };
-    console.log(payload);
+
     const accessToken = createAccessToken(payload);
 
     newUser = newUser.toJSON();
