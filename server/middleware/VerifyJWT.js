@@ -11,16 +11,21 @@ const verifyJWT = async (req, res, next) => {
 
   const accessToken = authHeader.split(" ")[1];
 
-  jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      console.log(err);
-      return res.status(403).json({ error: "Forbidden." });
-    }
-    //setting the user from decoded access token.
-    req.user = decoded.email; //Can change this to  name if you need.
-    req.id = decoded.id;
-    next();
-  });
+  try {
+    jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.log(err);
+        return res.status(403).json({ error: "Forbidden." });
+      }
+      //setting the user from decoded access token.
+      req.user = decoded.email; //Can change this to  name if you need.
+      req.id = decoded.id;
+      next();
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ error: "Forbidden." });
+  }
 };
 
 module.exports = verifyJWT;
