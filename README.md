@@ -4,7 +4,6 @@ This template was made to create the boilerplate code for a fullstack MERN app a
 
 ---
 
-
 # Development
 
 MERN-Starter requires [Node.js](https://nodejs.org/) v10+ to run. Tested on version `16.14.2`
@@ -33,7 +32,7 @@ Double check your MongoDB connection URI. For example:
 DB_URI=mongodb+srv://<username>:<password>@cluster0.qkyacex.mongodb.net/?retryWrites=true&w=majority
 ```
 
-This App uses `concurrently` to start both the client and server. I have configured the root `package.json` to define workspaces with the client and server. So in the ROOT directory:
+This App uses [concurrently] to start both the client and server. I have configured the root `package.json` to define workspaces with the client and server. So in the ROOT directory:
 
 ```
 npm start
@@ -51,7 +50,6 @@ npm start
 
 - [Vitest] - Vitest is a testing library for Vite, a modern development build tool for JavaScript applications. It is designed to work seamlessly with Vite's fast and efficient development workflow, providing a convenient way to run tests in Vite projects.
 
-
 ### **Back-End**
 
 ---
@@ -68,7 +66,7 @@ npm start
 
 ---
 
-Testing your application is very important to make sure your app is running as expected and as a user would interact with it without breaking and encountering bugs. I have set up [Vitest] in the client, and there is a ```__tests__``` directory in the client folder. Simply running ```npm test``` from the client directory will run all the files with .tests in their extension. I have configured a starter test that simply tests that the `App` renders with text. Feel free to add your own tests as your application grows.
+Testing your application is very important to make sure your app is running as expected and as a user would interact with it without breaking and encountering bugs. I have set up [Vitest] in the client, and there is a `__tests__` directory in the client folder. Simply running `npm test` from the client directory will run all the files with .tests in their extension. I have configured a starter test that simply tests that the `App` renders with text. Feel free to add your own tests as your application grows.
 
 I plan to add server side testing as I continue to build out this template.
 
@@ -89,5 +87,5 @@ I welcome contributions. Simply open a pull request with your changes and I will
 [nginx]: https://www.nginx.com/
 [express]: http://expressjs.com
 [react]: https://react.dev/
-[pm2]: https://pm2.keymetrics.io/
+[concurrently]: https://www.npmjs.com/package/concurrently
 [http://54.90.137.205/]: http://54.90.137.205/
