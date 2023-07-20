@@ -2,7 +2,9 @@ const dotenv = require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const { PORT } = require("./config/constants");
+const { PORT, NODE_ENV, API_URL } = require("./config/constants");
+const connectDB = require("./config/db");
+const userRouter = require("./routes/user.routes");
 
 const app = express();
 
@@ -12,7 +14,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev")); //logging
 
+//DB connection
+connectDB();
+
 //routes
+app.use(`${API_URL}/users`, userRouter);
 
 //server static files in production
 if (NODE_ENV === "production") {
