@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const DashBoard = () => {
   const [list, setList] = useState("");
