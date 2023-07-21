@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
+import "./register.css";
 
 const initialFormState = {
   name: "",
@@ -11,6 +12,7 @@ const initialFormState = {
 const Register = () => {
   const [formData, setFormData] = useState(initialFormState);
   const { register } = useAuthContext();
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -21,10 +23,15 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register(formData);
-      navigate("/welcome");
+      await register(formData).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          navigate("/dashboard");
+        }
+      });
     } catch (error) {
-      console.log(error);
+      setError(error.message || "Something went wrong.");
+      console.log(error.message);
     }
   };
 
@@ -34,6 +41,8 @@ const Register = () => {
       <input
         type="text"
         name="name"
+        id="name"
+        autoComplete="name"
         value={formData.name}
         onChange={handleInputChange}
       />
@@ -42,14 +51,18 @@ const Register = () => {
       <input
         type="email"
         name="email"
+        id="email"
+        autoComplete="email"
         value={formData.email}
         onChange={handleInputChange}
       />
-      <label htmlFor="password">password</label>
+      <label htmlFor="password">Password</label>
 
       <input
         type="password"
         name="password"
+        id="password"
+        autoComplete="new-password"
         value={formData.password}
         onChange={handleInputChange}
       />
@@ -58,11 +71,14 @@ const Register = () => {
       <input
         type="password"
         name="confirmPassword"
+        id="confirmPassword"
+        autoComplete="new-password"
         value={formData.confirmPassword}
         onChange={handleInputChange}
       />
 
       <input type="submit" />
+      <div className="errorMsg">{error && error}</div>
     </form>
   );
 };

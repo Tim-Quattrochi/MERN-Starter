@@ -61,7 +61,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userDetails) => {
     const { password } = userDetails; //To log them in on line 85
-
+    if (!password) {
+      throw new Error("password required");
+    }
     try {
       const response = await axios.post(
         "/auth/register",
