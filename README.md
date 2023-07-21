@@ -24,6 +24,7 @@ For example:
  NODE_ENV=development
  DB_URI=YOUR_URI
  PORT=3001
+ API_URL=YOUR_API
 ```
 
 Double check your MongoDB connection URI. For example:
