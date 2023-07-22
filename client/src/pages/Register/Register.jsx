@@ -22,21 +22,20 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
-      await register(formData).then((res) => {
-        console.log(res);
-        if (res.status === 200) {
-          navigate("/dashboard");
-        }
-      });
+      await register(formData);
+
+      navigate("/dashboard");
     } catch (error) {
       setError(error.message || "Something went wrong.");
-      console.log(error.message);
+      console.log(error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <h1>Register</h1>
       <label htmlFor="name">Name</label>
       <input
         type="text"
@@ -47,7 +46,6 @@ const Register = () => {
         onChange={handleInputChange}
       />
       <label htmlFor="email">Email</label>
-
       <input
         type="email"
         name="email"
@@ -57,7 +55,6 @@ const Register = () => {
         onChange={handleInputChange}
       />
       <label htmlFor="password">Password</label>
-
       <input
         type="password"
         name="password"
@@ -67,7 +64,6 @@ const Register = () => {
         onChange={handleInputChange}
       />
       <label htmlFor="confirmPassword">Confirm Password</label>
-
       <input
         type="password"
         name="confirmPassword"
@@ -76,7 +72,6 @@ const Register = () => {
         value={formData.confirmPassword}
         onChange={handleInputChange}
       />
-
       <input type="submit" />
       <div className="errorMsg">{error && error}</div>
     </form>

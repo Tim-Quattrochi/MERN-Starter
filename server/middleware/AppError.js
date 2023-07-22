@@ -3,6 +3,8 @@ const { logEvents } = require("./logger");
 const AppError = (err, req, res, next) => {
   if (err.name === "TokenExpiredError") {
     return res.status(401).json({ error: "Token expired." });
+  } else if (err.name === "ValidationError") {
+    return res.status(400).json({ error: err.message });
   }
 
   logEvents(
@@ -14,7 +16,7 @@ const AppError = (err, req, res, next) => {
 
   res.status(status);
 
-  res.json({ message: err.message });
+  res.json({ error: err.message });
 };
 
 module.exports = { AppError };

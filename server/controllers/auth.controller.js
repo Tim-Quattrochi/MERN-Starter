@@ -52,7 +52,7 @@ const login = async (req, res) => {
   }
 };
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
@@ -87,7 +87,7 @@ const signup = async (req, res) => {
     res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
@@ -96,7 +96,9 @@ const refresh = async (req, res) => {
     const cookies = req.cookies;
 
     if (!cookies[APP_NAME]) {
-      return res.status(401).json({ error: "Refresh token not found in cookies." });
+      return res
+        .status(401)
+        .json({ error: "Refresh token not found in cookies." });
     }
 
     const refreshToken = cookies[APP_NAME];
@@ -107,7 +109,9 @@ const refresh = async (req, res) => {
       REFRESH_TOKEN_SECRET,
       async (err, decoded) => {
         if (err || user.email !== decoded.email) {
-          return res.status(403).json({ error: "Invalid refresh token or credentials mismatch." });
+          return res.status(403).json({
+            error: "Invalid refresh token or credentials mismatch.",
+          });
         }
       }
     );
@@ -115,7 +119,7 @@ const refresh = async (req, res) => {
     const payload = { id: user._id, email: user.email };
     const accessToken = createAccessToken(payload);
 
-    return res.status(200).json({accessToken: accessToken});
+    return res.status(200).json({ accessToken: accessToken });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Something went wrong." });
@@ -124,13 +128,11 @@ const refresh = async (req, res) => {
 
 const list = async (req, res) => {
   try {
-      res.status(200).json({ list: [1, 2, 3, 4, 5] });
+    res.status(200).json({ list: [1, 2, 3, 4, 5] });
   } catch (error) {
-    console.log(error)
-    res.status(500).json(error)
+    console.log(error);
+    res.status(500).json(error);
   }
-
 };
-
 
 module.exports = { signup, login, refresh, list };

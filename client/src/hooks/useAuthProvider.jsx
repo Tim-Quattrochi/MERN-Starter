@@ -61,9 +61,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userDetails) => {
     const { password } = userDetails; //To log them in on line 85
-    if (!password) {
-      throw new Error("password required");
-    }
+
     try {
       const response = await axios.post(
         "/auth/register",
@@ -83,12 +81,15 @@ export const AuthProvider = ({ children }) => {
           payload: { user: userInfo, accessToken },
         });
 
-        await login(email, password);
-      } else {
-        console.log("Reg error:", response.statusText);
+        return await login(email, password);
       }
     } catch (error) {
       console.log(error);
+      if (error.response || error.response.data) {
+        throw new Error(error.response.data.error);
+      } else {
+        throw error;
+      }
     }
   };
 
