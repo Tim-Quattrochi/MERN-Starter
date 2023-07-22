@@ -108,11 +108,14 @@ export const AuthProvider = ({ children }) => {
           type: "LOGIN",
           payload: { user: userInfo, accessToken },
         });
-      } else {
-        console.log("login error:", response.statusText);
       }
     } catch (error) {
       console.log(error);
+      if (error.response || error.response.data) {
+        throw new Error(error.response.data.error);
+      } else {
+        throw error;
+      }
     }
   };
 
