@@ -24,3 +24,11 @@ input[type="submit"] {
 .errorMsg {
   color: red;
 }
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  color: blueviolet;
+}
