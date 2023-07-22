@@ -1,12 +1,12 @@
-const { AppError } = require("./AppError");
-
 const validateReqBody = (...params) => {
   const middleware = (req, res, next) => {
     for (const param of params) {
-      if (!(param in req.body) || req.body[param] === "") {
+      if (!(param in req.body) || !req.body[param]) {
         let error = new Error(`${param} is required.`);
         res.statusCode = 400;
-        error.message = `Please fill out the required fields: ${params}`;
+        error.message = `Please fill out the required fields: ${params.join(
+          ", "
+        )}.`;
         error.name = "ValidationError";
 
         next(error);
