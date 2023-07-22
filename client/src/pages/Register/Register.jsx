@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./register.css";
 
 const initialFormState = {
@@ -73,6 +73,7 @@ const Register = () => {
         onChange={handleInputChange}
       />
       <input type="submit" />
+      <Link to="/login">Have an account?</Link>
       <div className="errorMsg">{error && error}</div>
     </form>
   );
