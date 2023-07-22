@@ -6,7 +6,7 @@ const validateReqBody = (...params) => {
       if (!(param in req.body) || req.body[param] === "") {
         let error = new Error(`${param} is required.`);
         res.statusCode = 400;
-        error.message = `Please filled out the required fields:${params}`;
+        error.message = `Please fill out the required fields: ${params}`;
         error.name = "ValidationError";
 
         next(error);
