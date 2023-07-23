@@ -1,7 +1,7 @@
 import Register from "./Register";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 
 describe("register test suite", () => {
   const renderRegister = () => {
@@ -70,12 +70,8 @@ describe("register test suite", () => {
     expect(confirmPasswordInput.value).toBe("test1234");
   });
 
-  it("it tests that clicking on have an account navigates to the login", () => {
+  it("it tests that clicking on have an account link navigates to the login", () => {
     renderRegister();
-    const useNavigateMock = vi.fn().mockReturnValue(vi.fn());
-    vi.doMock("react-router-dom", async () => ({
-      useNavigate: vi.fn().mockReturnValue(vi.fn()),
-    }));
 
     const link = screen.getByRole("link", {
       name: /have an account\?/i,
@@ -83,10 +79,6 @@ describe("register test suite", () => {
 
     fireEvent.click(link);
 
-    useNavigateMock("/login");
-
-    expect(useNavigateMock).toHaveBeenCalledWith("/login");
-    // Check that the route is actually navigated to
     expect(window.location.pathname).toBe("/login");
   });
 });
