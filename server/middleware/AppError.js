@@ -12,11 +12,10 @@ const AppError = (err, req, res, next) => {
     "errLog.log"
   );
 
-  const status = res.statusCode ? res.statusCode : 500; //server error
+  const status =
+    err.statusCode || res.statusCode || res.statusCode || 500; //server error
 
-  res.status(status);
-
-  res.json({ error: err.message });
+  res.status(status).json({ error: err.message });
 };
 
 module.exports = { AppError };
