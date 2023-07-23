@@ -18,6 +18,7 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./src/__tests__/setup.js"],
+    restoreMocks: true,
   },
   resolve: {
     extensions: [".js", ".json", ".jsx"],
