@@ -19,13 +19,13 @@ const login = async (req, res, next) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      throw new CustomError("Check Credentials.", 400);
+      return next(new CustomError("Check Credentials.", 400));
     }
 
     const passCompare = await bcrypt.compare(password, user.password);
 
     if (!passCompare) {
-      throw new CustomError("Invalid Credentials.", 401);
+      return next(new CustomError("Invalid Credentials.", 401));
     }
 
     const payload = { id: user._id, email: user.email };
@@ -58,12 +58,12 @@ const signup = async (req, res, next) => {
 
   try {
     if (password !== confirmPassword) {
-      throw new CustomError("Check Credentials.", 400);
+      return next(new CustomError("Invalid email or password.", 400));
     }
     const user = await User.findOne({ email });
 
     if (user) {
-      throw new CustomError("User already exists.", 400);
+      return next(new CustomError("User already exists.", 400));
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -96,9 +96,8 @@ const refresh = async (req, res, next) => {
     const cookies = req.cookies;
 
     if (!cookies[APP_NAME]) {
-      throw new CustomError(
-        "Refresh Token not found in cookies.",
-        401
+      return next(
+        new CustomError("Refresh Token not found in cookies.", 401)
       );
     }
 
@@ -110,9 +109,11 @@ const refresh = async (req, res, next) => {
       REFRESH_TOKEN_SECRET,
       async (err, decoded) => {
         if (err || user.email !== decoded.email) {
-          throw new CustomError(
-            "Invalid refresh token or credentials mismatch.",
-            403
+          return next(
+            new CustomError(
+              "Invalid refresh token or credentials mismatch.",
+              403
+            )
           );
         }
       }
@@ -132,7 +133,7 @@ const logout = (req, res, next) => {
   const cookies = req.cookies;
   try {
     if (!cookies[APP_NAME]) {
-      throw new CustomError("No cookies to clear.", 200);
+      return next(new CustomError("No cookies to clear.", 200));
     }
 
     res.clearCookie(APP_NAME, {
@@ -141,18 +142,18 @@ const logout = (req, res, next) => {
       secure: true,
     });
 
-    throw new CustomError("Cookie cleared.", 200);
+    return next(new CustomError("Cookies Cleared.", 200));
   } catch (error) {
     next(error);
   }
 };
 
-const list = async (req, res) => {
+const list = async (req, res, next) => {
   try {
     res.status(200).json({ list: [1, 2, 3, 4, 5] });
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    next(error);
   }
 };
 
