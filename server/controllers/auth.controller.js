@@ -10,21 +10,22 @@ const {
   REFRESH_TOKEN_SECRET,
   APP_NAME,
 } = require("../config/constants");
+const CustomError = require("../utils/errorClass");
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
     let user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ error: "Check Credentials." });
+      throw new CustomError("Check Credentials.", 400);
     }
 
     const passCompare = await bcrypt.compare(password, user.password);
 
     if (!passCompare) {
-      return res.status(401).json({ error: "Invalid credentials." });
+      throw new CustomError("Invalid Credentials.", 401);
     }
 
     const payload = { id: user._id, email: user.email };
@@ -48,22 +49,21 @@ const login = async (req, res) => {
       .json({ ...user, accessToken: accessToken });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Something went wrong." });
+    next(error);
   }
 };
 
 const signup = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
-  if (password !== confirmPassword) {
-    return res.status(400).json({ error: "Passwords must match." });
-  }
-
   try {
+    if (password !== confirmPassword) {
+      throw new CustomError("Check Credentials.", 400);
+    }
     const user = await User.findOne({ email });
 
     if (user) {
-      return res.status(400).json({ error: "User already exists" });
+      throw new CustomError("User already exists.", 400);
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -91,14 +91,15 @@ const signup = async (req, res, next) => {
   }
 };
 
-const refresh = async (req, res) => {
+const refresh = async (req, res, next) => {
   try {
     const cookies = req.cookies;
 
     if (!cookies[APP_NAME]) {
-      return res
-        .status(401)
-        .json({ error: "Refresh token not found in cookies." });
+      throw new CustomError(
+        "Refresh Token not found in cookies.",
+        401
+      );
     }
 
     const refreshToken = cookies[APP_NAME];
@@ -109,9 +110,10 @@ const refresh = async (req, res) => {
       REFRESH_TOKEN_SECRET,
       async (err, decoded) => {
         if (err || user.email !== decoded.email) {
-          return res.status(403).json({
-            error: "Invalid refresh token or credentials mismatch.",
-          });
+          throw new CustomError(
+            "Invalid refresh token or credentials mismatch.",
+            403
+          );
         }
       }
     );
@@ -122,7 +124,26 @@ const refresh = async (req, res) => {
     return res.status(200).json({ accessToken: accessToken });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "Something went wrong." });
+    next(error);
+  }
+};
+
+const logout = (req, res, next) => {
+  const cookies = req.cookies;
+  try {
+    if (!cookies[APP_NAME]) {
+      throw new CustomError("No cookies to clear.", 200);
+    }
+
+    res.clearCookie(APP_NAME, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
+
+    throw new CustomError("Cookie cleared.", 200);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -135,4 +156,4 @@ const list = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, refresh, list };
+module.exports = { signup, login, refresh, list, logout };

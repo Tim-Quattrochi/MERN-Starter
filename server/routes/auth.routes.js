@@ -2,6 +2,7 @@ const express = require("express");
 const {
   signup,
   login,
+  logout,
   refresh,
   list,
 } = require("../controllers/auth.controller");
@@ -22,6 +23,8 @@ userRouter.post(
   validateReqBody("email", "password"),
   login
 );
+
+userRouter.post("/logout", logout);
 
 userRouter.get("/refresh", rateLimiter, refresh);
 userRouter.get("/list", VerifyJWT, list);

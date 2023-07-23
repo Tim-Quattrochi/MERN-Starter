@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import useAuthContext from "../../hooks/useAuthContext";
 
 const DashBoard = () => {
   const [list, setList] = useState("");
   const axiosPrivate = useAxiosPrivate();
+  const { handleLogout, authState } = useAuthContext();
+
+  console.log(authState);
 
   useEffect(() => {
     axiosPrivate
@@ -18,7 +22,12 @@ const DashBoard = () => {
         console.log(err);
       });
   }, []);
-  return <div>DashBoard</div>;
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <button onClick={handleLogout}>Logout</button>
+    </div>
+  );
 };
 
 export default DashBoard;

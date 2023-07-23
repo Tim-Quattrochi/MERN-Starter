@@ -1,6 +1,7 @@
 import { createContext, useEffect, useReducer } from "react";
 import axios from "../hooks/useAxios";
 import { APP_NAME } from "../config/constants";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext({});
 
@@ -40,6 +41,7 @@ const authReducer = (state, action) => {
 
 export const AuthProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, {});
+  const navigate = useNavigate();
 
   useEffect(() => {
     try {
@@ -119,9 +121,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(`${APP_NAME}`);
-    authDispatch({ type: "LOGOUT" });
+  const handleLogout = async () => {
+    try {
+      await axios.post("/auth/logout");
+
+      localStorage.removeItem(`${APP_NAME}`);
+      authDispatch({ type: "LOGOUT", payload: authState.user });
+      // return navigate("/welcome");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
