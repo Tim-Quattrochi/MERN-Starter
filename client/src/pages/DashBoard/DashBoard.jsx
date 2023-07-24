@@ -7,16 +7,19 @@ const DashBoard = () => {
   const axiosPrivate = useAxiosPrivate();
   const { handleLogout, authState } = useAuthContext();
 
-  console.log(authState);
+  /**
+   * @description Right now this axios call is just a test
+   * to test protected endpoints
+   */
 
   useEffect(() => {
     axiosPrivate
       .get("/auth/list")
       .then((res) => {
         const { data } = res;
-        console.log(res);
-        setList(data);
-        console.log(data);
+
+        const { list } = data;
+        setList(list);
       })
       .catch((err) => {
         console.log(err);
@@ -25,6 +28,10 @@ const DashBoard = () => {
   return (
     <div>
       <h1>Dashboard</h1>
+      <span>IF you can see this list, you are authorized.</span>
+      <ul>
+        {list && list.map((item, i) => <li key={i}>{item}</li>)}
+      </ul>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );
