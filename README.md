@@ -13,7 +13,7 @@ This template creates the boilerplate code for a full stack MERN app and helps d
 5. [Tech Stack](#tech-stack)
 6. [Features](#features)
 7. [Testing](#testing)
-8. [Contributing](#contributing)
+8. [Github workflow to contribute](#github-workflow-steps-to-contribute)
 
 ---
 
@@ -120,7 +120,37 @@ Feel free to put your `.tests` closer to the components you are testing. They do
 
 I plan to add server-side testing as I build out this template.
 
-### Contributing
+### Github workflow steps to contribute
+
+---
+
+- Creator: Create a new issue
+
+- Dev: Pick an issue
+
+- Dev: Comment agreeing to work on the issue
+
+- Dev: Assign issue to themself
+
+- Dev: Make a branch, named with the issue number and description
+
+- Dev: Make changes, commit changes
+
+- Dev: Make a pull request (PR)
+
+- Creator: Review PR
+
+- Creator: Request changes
+
+- Dev: Complete requested changes, commit and submit PR
+
+- Creator: Approve changes, request merge
+
+- Dev: Merge PR
+
+- Dev: Delete issue-specific branch
+
+- Creator: Close issue
 
 ---
 
