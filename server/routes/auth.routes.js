@@ -27,6 +27,10 @@ userRouter.post(
 userRouter.post("/logout", logout);
 
 userRouter.get("/refresh", rateLimiter, refresh);
+
+/**
+ * This is just a test route to test protected resources via the VerifyJWT middleware.
+ */
 userRouter.get("/list", VerifyJWT, list);
 
 module.exports = userRouter;

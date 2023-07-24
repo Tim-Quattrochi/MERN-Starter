@@ -148,6 +148,13 @@ const logout = (req, res, next) => {
   }
 };
 
+/**
+ * This is just a test endpoint because it is protected with VerifyJWT middleware.
+ * @param {*} req the request
+ * @param {*} res  the response
+ * @param {*} next  the next fn that passes to the next chain
+ * @returns {Object} returns a list of numbers
+ */
 const list = async (req, res, next) => {
   try {
     res.status(200).json({ list: [1, 2, 3, 4, 5] });
