@@ -1,5 +1,11 @@
 const { APP_NAME } = require("./constants");
 
+/**
+ *
+ * @param {string} token
+ * @param {object} res response
+ * @returns {*} res.cookie containing the app name, refresh token, and configurations.
+ */
 const createCookie = (token, res) => {
   return res.cookie(APP_NAME, token, {
     httpOnly: true,
