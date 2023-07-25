@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import "./register.css";
@@ -10,55 +11,88 @@ const initialFormState = {
   confirmPassword: "",
 };
 
+
 const Register = () => {
   const [formData, setFormData] = useState(initialFormState);
   const { register } = useAuthContext();
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({}); // will store error messages
+  const [touched, setTouched] = useState({}); //will track for client interaction
+
+  useEffect(() => {
+    // Mark all fields as touched after the component mounts, error messages are displayed only after the user interacts with the respective fields.
+    setTouched({
+      name: true,
+      email: true,
+      password: true,
+      confirmPassword: true,
+    });
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  //---- Form validation logic for name, email, password, and confirmPassword
+    //---- Form validation logic for name, email, password, and confirmPassword
 
-  //validateForm function => performs form validation based on the entered data in formData,
-  // the validation errors are added to the newErrors object.
+  //validateFields function => performs form validation based on the entered data in formData,
 
-  const validateForm = () => {
-    const newErrors = {};
 
-    if (!formData.name) {
-      newErrors.name = "Name is required.";
+  const validateFields = (fieldName) => {
+    if (!formData[fieldName].trim() && touched[fieldName]) { // if true, the field has been interacted with
+      return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required.`;
+    } else if (
+      fieldName === "email" &&
+      touched.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
+      return "Please enter a valid email address.";
+    } else if (
+      fieldName === "password" &&
+      touched.password &&
+      formData.password.length < 7
+    ) {
+      return "Password must be at least 7 characters long.";
+    } else if (
+      fieldName === "confirmPassword" &&
+      touched.confirmPassword &&
+      formData.password !== formData.confirmPassword
+    ) {
+      return "Passwords do not match.";
     }
+    return "";
+  };
 
-    if (!formData.email) {
-      newErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address.";
-    }
 
-    if (!formData.password) {
-      newErrors.password = "Password is required.";
-    } else if (formData.password.length < 7) {
-      newErrors.password = "Password must be at least 6 characters long.";
-    }
+  
 
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm Password is required.";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;   //Checks if the newErrors object is empty (no validation errors) If so, the function returns true, and the form is valid.
+  const handleInputBlur = (e) => {
+    const { name } = e.target;
+    setTouched({ ...touched, [name]: true });
+    setErrors({ ...errors, [name]: validateFields(name) }); //update with errors found
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setTouched({ //all fields were touched
+      name: true,
+      email: true,
+      password: true,
+      confirmPassword: true,
+    });
 
-    if (validateForm()) {
+
+    // Validate all fields on form submission
+    const newErrors = {};
+    Object.keys(formData).forEach((fieldName) => {
+      newErrors[fieldName] = validateFields(fieldName);
+    });
+    setErrors(newErrors);
+
+    // Check if there are any errors before submitting
+    const isFormValid = Object.values(newErrors).every((error) => error === "");//  all empty strings(no errors)
+    if (isFormValid) {
       try {
         await register(formData);
         navigate("/dashboard");
@@ -78,8 +112,8 @@ const Register = () => {
         id="name"
         autoComplete="name"
         value={formData.name}
-        onBlur={validateForm} // Trigger validation onBlur
         onChange={handleInputChange}
+        onBlur={handleInputBlur} // Track field blur event
       />
       {errors.name && <div className="errorMsg">{errors.name}</div>}
 
@@ -90,8 +124,8 @@ const Register = () => {
         id="email"
         autoComplete="email"
         value={formData.email}
-        onBlur={validateForm} // Trigger validation onBlur
         onChange={handleInputChange}
+        onBlur={handleInputBlur} // Track field blur event
       />
       {errors.email && <div className="errorMsg">{errors.email}</div>}
 
@@ -102,8 +136,8 @@ const Register = () => {
         id="password"
         autoComplete="new-password"
         value={formData.password}
-        onBlur={validateForm} // Trigger validation onBlur
         onChange={handleInputChange}
+        onBlur={handleInputBlur} // Track field blur event
       />
       {errors.password && <div className="errorMsg">{errors.password}</div>}
 
@@ -114,12 +148,10 @@ const Register = () => {
         id="confirmPassword"
         autoComplete="new-password"
         value={formData.confirmPassword}
-        onBlur={validateForm} // Trigger validation onBlur
         onChange={handleInputChange}
+        onBlur={handleInputBlur} // Track field blur event
       />
-      {errors.confirmPassword && (
-        <div className="errorMsg">{errors.confirmPassword}</div>
-      )}
+      {errors.confirmPassword && <div className="errorMsg">{errors.confirmPassword}</div>}
 
       <input type="submit" />
       <Link to="/login">Have an account?</Link>
@@ -128,3 +160,4 @@ const Register = () => {
 };
 
 export default Register;
+
