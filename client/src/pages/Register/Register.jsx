@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -10,7 +9,6 @@ const initialFormState = {
   password: "",
   confirmPassword: "",
 };
-
 
 const Register = () => {
   const [formData, setFormData] = useState(initialFormState);
@@ -34,14 +32,16 @@ const Register = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-    //---- Form validation logic for name, email, password, and confirmPassword
+  //---- Form validation logic for name, email, password, and confirmPassword
 
   //validateFields function => performs form validation based on the entered data in formData,
 
-
   const validateFields = (fieldName) => {
-    if (!formData[fieldName].trim() && touched[fieldName]) { // if true, the field has been interacted with
-      return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required.`;
+    if (!formData[fieldName].trim() && touched[fieldName]) {
+      // if true, the field has been interacted with
+      return `${
+        fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+      } is required.`;
     } else if (
       fieldName === "email" &&
       touched.email &&
@@ -64,9 +64,6 @@ const Register = () => {
     return "";
   };
 
-
-  
-
   const handleInputBlur = (e) => {
     const { name } = e.target;
     setTouched({ ...touched, [name]: true });
@@ -75,13 +72,13 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setTouched({ //all fields were touched
+    setTouched({
+      //all fields were touched
       name: true,
       email: true,
       password: true,
       confirmPassword: true,
     });
-
 
     // Validate all fields on form submission
     const newErrors = {};
@@ -91,13 +88,16 @@ const Register = () => {
     setErrors(newErrors);
 
     // Check if there are any errors before submitting
-    const isFormValid = Object.values(newErrors).every((error) => error === "");//  all empty strings(no errors)
+    const isFormValid = Object.values(newErrors).every(
+      (error) => error === ""
+    ); //  all empty strings(no errors)
     if (isFormValid) {
       try {
         await register(formData);
         navigate("/dashboard");
       } catch (error) {
-        console.log(error);
+        // add server error
+        setErrors({ ...errors, serverError: error.message });
       }
     }
   };
@@ -139,7 +139,9 @@ const Register = () => {
         onChange={handleInputChange}
         onBlur={handleInputBlur} // Track field blur event
       />
-      {errors.password && <div className="errorMsg">{errors.password}</div>}
+      {errors.password && (
+        <div className="errorMsg">{errors.password}</div>
+      )}
 
       <label htmlFor="confirmPassword">Confirm Password</label>
       <input
@@ -151,13 +153,17 @@ const Register = () => {
         onChange={handleInputChange}
         onBlur={handleInputBlur} // Track field blur event
       />
-      {errors.confirmPassword && <div className="errorMsg">{errors.confirmPassword}</div>}
+      {errors.confirmPassword && (
+        <div className="errorMsg">{errors.confirmPassword}</div>
+      )}
 
       <input type="submit" />
       <Link to="/login">Have an account?</Link>
+      {errors.serverError && (
+        <div className="errorMsg">{errors.serverError}</div>
+      )}
     </form>
   );
 };
 
 export default Register;
-
