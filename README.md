@@ -1,6 +1,6 @@
 # MERN Starter Template
 
-This template creates the boilerplate code for a full stack MERN app and helps developers start working on their projects more quicker.
+This template creates the boilerplate code for a full stack MERN app and helps developers start working on their projects more quickly.
 
 ### Table of Contents
 
