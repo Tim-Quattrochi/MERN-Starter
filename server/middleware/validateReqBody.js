@@ -1,3 +1,9 @@
+/**
+ * Middleware to validate request body.
+ * Takes in string separated by comma. "Name", "Email", for example.
+ * @param  {...any} params
+ * @returns
+ */
 const validateReqBody = (...params) => {
   const middleware = (req, res, next) => {
     for (const param of params) {
