@@ -104,20 +104,15 @@ const refresh = async (req, res, next) => {
     const refreshToken = cookies[APP_NAME];
     const user = await User.findOne({ refreshToken });
 
-    jwt.verify(
-      refreshToken,
-      REFRESH_TOKEN_SECRET,
-      async (err, decoded) => {
-        if (err || user.email !== decoded.email) {
-          return next(
-            new CustomError(
-              "Invalid refresh token or credentials mismatch.",
-              403
-            )
-          );
-        }
+    if (!user) {
+      return next(new CustomError("Forbidden.", 403));
+    }
+
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err || user.email !== decoded.email) {
+        return res.sendStatus(403); //forbidden
       }
-    );
+    });
 
     const payload = { id: user._id, email: user.email };
     const accessToken = createAccessToken(payload);
