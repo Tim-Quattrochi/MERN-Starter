@@ -9,6 +9,7 @@ const {
 const VerifyJWT = require("../middleware/VerifyJWT");
 const validateReqBody = require("../middleware/validateReqBody");
 const rateLimiter = require("../middleware/rateLimiter");
+const verifyJWT = require("../middleware/VerifyJWT");
 
 const userRouter = express.Router();
 
@@ -26,7 +27,7 @@ userRouter.post(
 
 userRouter.post("/logout", logout);
 
-userRouter.get("/refresh", rateLimiter, refresh);
+userRouter.get("/refresh", refresh);
 
 /**
  * This is just a test route to test protected resources via the VerifyJWT middleware.
