@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config/constants");
+const { ACCESS_TOKEN_SECRET } = require("../config/constants");
 
 const verifyJWT = async (req, res, next) => {
   const authHeader =
@@ -12,7 +12,7 @@ const verifyJWT = async (req, res, next) => {
   const accessToken = authHeader.split(" ")[1];
 
   try {
-    jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
+    jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
         console.log(err);
         return res.status(403).json({ error: "Forbidden." });
