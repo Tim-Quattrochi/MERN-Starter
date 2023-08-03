@@ -1,27 +1,37 @@
-import { createContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import axios from "../hooks/useAxios";
 import { APP_NAME } from "../config/constants";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext({});
 
-const authReducer = (state, action) => {
-  const { user, accessToken } = action.payload;
+const initialState = {
+  user: null,
+  isAuthenticated: false,
+  isSubmitting: false,
+  accessToken: null,
+};
 
+const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
       return {
         ...state,
         isAuthenticated: true,
-        user,
-        accessToken,
+        user: action.payload.user,
+        accessToken: action.payload.accessToken,
       };
     case "REGISTER":
       return {
         ...state,
         isAuthenticated: true,
-        user,
-        accessToken: accessToken,
+        user: action.payload.user,
+        accessToken: action.payload.accessToken,
       };
     case "LOGOUT":
       return {
@@ -35,27 +45,37 @@ const authReducer = (state, action) => {
         ...state,
         accessToken: action.payload,
       };
+    case "SET_IS_SUBMITTING":
+      return {
+        ...state,
+        isSubmitting: action.payload,
+      };
+
     default:
       return state;
   }
 };
 
 export const AuthProvider = ({ children }) => {
-  const [authState, authDispatch] = useReducer(authReducer, {});
+  const [authState, authDispatch] = useReducer(
+    authReducer,
+    initialState
+  );
+  const [checking, setIsChecking] = useState(true); //checking if user is authenticated for private route
   const navigate = useNavigate();
 
-  useEffect(() => {
-    try {
-      const authValue = JSON.parse(
-        localStorage.getItem(`${APP_NAME}`)
-      );
-      if (authValue) {
-        authDispatch({ type: "LOGIN", payload: authValue });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  /**
+   *
+   * @param {string} caseToCall  - the action to dispatch.
+   * @param {any} [value ] - the payload data for action (optional)
+   * @returns {void}
+   */
+  const handleDispatch = (caseToCall, value) => {
+    authDispatch({
+      type: caseToCall,
+      payload: value,
+    });
+  };
 
   const saveToLocal = (user, accessToken) => {
     const dataToStore = { user, accessToken };
@@ -64,6 +84,8 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userDetails) => {
     const { password } = userDetails; //To log them in on line 85
+
+    handleDispatch("SET_IS_SUBMITTING", true);
 
     try {
       const response = await axios.post(
@@ -79,15 +101,17 @@ export const AuthProvider = ({ children }) => {
           email,
         };
         saveToLocal(userInfo, accessToken);
-        authDispatch({
-          type: "REGISTER",
-          payload: { user: userInfo, accessToken },
-        });
+
+        handleDispatch("REGISTER", { user: userInfo, accessToken });
+        handleDispatch("SET_IS_SUBMITTING", false);
 
         return await login(email, password);
       }
     } catch (error) {
+      handleDispatch("SET_IS_SUBMITTING", false);
+
       console.log(error);
+
       if (error.response || error.response.data) {
         throw new Error(error.response.data.error);
       } else {
@@ -97,6 +121,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
+    handleDispatch("SET_IS_SUBMITTING", true);
+
     try {
       const response = await axios.post("/auth/login", {
         email,
@@ -107,13 +133,14 @@ export const AuthProvider = ({ children }) => {
         const { _id, name, email, accessToken } = response.data;
         const userInfo = { _id, name, email };
         saveToLocal(userInfo, accessToken);
-        authDispatch({
-          type: "LOGIN",
-          payload: { user: userInfo, accessToken },
-        });
+
+        handleDispatch("LOGIN", { user: userInfo, accessToken });
+        handleDispatch("SET_IS_SUBMITTING", false);
       }
     } catch (error) {
       console.log(error);
+      handleDispatch("SET_IS_SUBMITTING", false);
+
       if (error.response || error.response.data) {
         throw new Error(error.response.data.error);
       } else {
@@ -123,16 +150,35 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogout = async () => {
+    handleDispatch("SET_IS_SUBMITTING", true);
+
     try {
       await axios.post("/auth/logout");
 
       localStorage.removeItem(`${APP_NAME}`);
-      authDispatch({ type: "LOGOUT", payload: authState.user });
-      // return navigate("/welcome");
+      handleDispatch("LOGOUT", null);
+      handleDispatch("SET_IS_SUBMITTING", false);
+
+      return navigate("/welcome");
     } catch (error) {
+      handleDispatch("SET_IS_SUBMITTING", false);
+
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    handleDispatch("SET_IS_SUBMITTING", true);
+
+    const authValue = JSON.parse(localStorage.getItem(`${APP_NAME}`));
+    if (authValue) {
+      handleDispatch("LOGIN", authValue);
+    } else {
+      handleDispatch("LOGOUT", null);
+    }
+    handleDispatch("SET_IS_SUBMITTING", false);
+    setIsChecking(false);
+  }, [authDispatch]);
 
   return (
     <AuthContext.Provider
@@ -142,6 +188,8 @@ export const AuthProvider = ({ children }) => {
         register,
         login,
         handleLogout,
+
+        checking,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
 import Welcome from "./pages/Welcome/Welcome";
 import DashBoard from "./pages/DashBoard/DashBoard";
+import PrivateRoute from "./components/PrivateRoute";
 import Header from "./Header";
 function App() {
   return (
@@ -10,10 +11,14 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Welcome />} />
-        <Route path="register" element={<Register />} />
-        <Route path="login" element={<Login />} />
-        <Route path="welcome" element={<Welcome />} />
-        <Route path="dashboard" element={<DashBoard />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/welcome" element={<Welcome />} />
+
+        {/* Private Routes */}
+        <Route path="/dashboard" element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<DashBoard />} />
+        </Route>
       </Routes>
     </div>
   );
