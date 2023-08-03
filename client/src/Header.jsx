@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import useAuthContext from "./hooks/useAuthContext";
 
 const Navbar = () => {
-  const { authState } = useAuthContext();
+  const { authState, handleLogout } = useAuthContext();
 
   return (
     <nav style={styles.navbar}>
@@ -40,9 +40,9 @@ const Navbar = () => {
           ) : (
             <>
               Hello, {authState.user.name}
-              <Link to="/logout" style={styles.navLink}>
+              <button onClick={handleLogout} style={styles.navLink}>
                 Logout
-              </Link>
+              </button>
             </>
           )}
         </li>
