@@ -25,7 +25,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(formData.email, formData.password);
-      console.log(isSubmitting);
+
       navigate("/dashboard");
     } catch (error) {
       console.log(error);

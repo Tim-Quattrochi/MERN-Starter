@@ -21,7 +21,6 @@ const registerUser = async (userDetails, authDispatch) => {
     const response = await axios.post("/auth/register", userDetails);
     console.log(response.status);
     if (response.status === 201) {
-      console.log("FIRE");
       const { _id, name, email, accessToken } = response.data;
       const userInfo = {
         _id,
@@ -91,7 +90,6 @@ const loginUser = async (email, password, authDispatch) => {
         "SET_ERROR",
         error.response.data.error
       );
-      //   throw new Error(error.response.data.error);
     } else {
       throw error;
     }
