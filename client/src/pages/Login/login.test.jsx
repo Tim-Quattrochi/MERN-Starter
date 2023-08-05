@@ -7,11 +7,14 @@ import {
 } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { describe, it, expect, vi } from "vitest";
+import { AuthProvider } from "../../hooks/useAuthProvider";
 
 const renderLogin = () => {
   render(
     <BrowserRouter>
-      <Login />
+      <AuthProvider>
+        <Login />
+      </AuthProvider>
     </BrowserRouter>
   );
 };
