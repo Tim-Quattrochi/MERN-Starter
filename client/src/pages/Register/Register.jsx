@@ -14,8 +14,9 @@ const initialFormState = {
 const Register = () => {
   const [formData, setFormData] = useState(initialFormState);
   const {
+    handleRegister,
     register,
-    authState: { isSubmitting },
+    authState: { isSubmitting, errorMsg },
   } = useAuthContext();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({}); // will store error messages
@@ -97,9 +98,10 @@ const Register = () => {
     ); //  all empty strings(no errors)
     if (isFormValid) {
       try {
-        await register(formData);
-        navigate("/dashboard");
+        await handleRegister(formData);
+        // navigate("/dashboard");
       } catch (error) {
+        console.log(error);
         // add server error
         setErrors({ ...errors, serverError: error.message });
       }
@@ -168,6 +170,7 @@ const Register = () => {
       {errors.serverError && (
         <div className="errorMsg">{errors.serverError}</div>
       )}
+      {errorMsg && errorMsg}
     </form>
   );
 };

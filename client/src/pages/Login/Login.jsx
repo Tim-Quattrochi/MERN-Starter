@@ -12,7 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const {
-    login,
+    handleLogin,
     authState: { isSubmitting },
   } = useAuthContext();
 
@@ -24,7 +24,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData.email, formData.password);
+      await handleLogin(formData.email, formData.password);
 
       navigate("/dashboard");
     } catch (error) {

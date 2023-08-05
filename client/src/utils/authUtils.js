@@ -17,9 +17,9 @@ export const handleDispatch = (authDispatch, caseToCall, value) => {
 };
 
 /**
- *
+ * @description - Helper function to save data to local storage.
  * @param {object} user - the user data to be saved.
- * @param {string} accessToken - the accessToken to be saved
+ * @param {string} accessToken - the accessToken to be saved.
  * @returns {void}
  */
 export const saveToLocal = (user, accessToken) => {
