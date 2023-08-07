@@ -22,7 +22,7 @@ const login = async (req, res, next) => {
       return next(new CustomError("Check Credentials.", 400));
     }
 
-    const passCompare = await bcrypt.compare(password, user.password);
+    const passCompare = await user.comparePassword(password);
 
     if (!passCompare) {
       return next(new CustomError("Invalid Credentials.", 401));
@@ -142,6 +142,8 @@ const logout = (req, res, next) => {
     next(error);
   }
 };
+
+const forgotPassword = (req, res, next) => {};
 
 /**
  * This is just a test endpoint because it is protected with VerifyJWT middleware.
