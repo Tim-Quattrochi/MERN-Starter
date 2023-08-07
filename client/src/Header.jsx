@@ -3,14 +3,14 @@ import { Link, NavLink } from "react-router-dom";
 import useAuthContext from "./hooks/useAuthContext";
 
 const Navbar = () => {
-  const { authState } = useAuthContext();
+  const { authState, handleLogout } = useAuthContext();
 
   return (
     <nav style={styles.navbar}>
       <ul style={styles.navList}>
         <li>
           <NavLink
-            exact
+            exact={true.toString()}
             to="/dashboard"
             style={styles.navLink}
             activestyle={styles.activeNavLink}
@@ -18,7 +18,6 @@ const Navbar = () => {
             Dashboard
           </NavLink>
         </li>
-
         <li style={{ marginLeft: "auto" }}>
           {!authState.isAuthenticated ? (
             <>
@@ -26,6 +25,7 @@ const Navbar = () => {
                 to="/register"
                 style={styles.navLink}
                 activestyle={styles.activeNavLink}
+                exact={true.toString()}
               >
                 Register
               </NavLink>
@@ -40,7 +40,7 @@ const Navbar = () => {
           ) : (
             <>
               Hello, {authState.user.name}
-              <Link to="/logout" style={styles.navLink}>
+              <Link to="/" style={styles.navLink} onClick={handleLogout}>
                 Logout
               </Link>
             </>
@@ -48,6 +48,7 @@ const Navbar = () => {
         </li>
       </ul>
     </nav>
+    //test
   );
 };
 
