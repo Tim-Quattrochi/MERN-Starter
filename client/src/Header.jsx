@@ -10,7 +10,7 @@ const Navbar = () => {
       <ul style={styles.navList}>
         <li>
           <NavLink
-            exact
+            exact={true.toString()}
             to="/dashboard"
             style={styles.navLink}
             activestyle={styles.activeNavLink}
@@ -18,7 +18,6 @@ const Navbar = () => {
             Dashboard
           </NavLink>
         </li>
-
         <li style={{ marginLeft: "auto" }}>
           {!authState.isAuthenticated ? (
             <>
@@ -26,6 +25,7 @@ const Navbar = () => {
                 to="/register"
                 style={styles.navLink}
                 activestyle={styles.activeNavLink}
+                exact={true.toString()}
               >
                 Register
               </NavLink>
@@ -40,14 +40,15 @@ const Navbar = () => {
           ) : (
             <>
               Hello, {authState.user.name}
-              <button onClick={handleLogout} style={styles.navLink}>
+              <Link to="/" style={styles.navLink} onClick={handleLogout}>
                 Logout
-              </button>
+              </Link>
             </>
           )}
         </li>
       </ul>
     </nav>
+    //test
   );
 };
 
