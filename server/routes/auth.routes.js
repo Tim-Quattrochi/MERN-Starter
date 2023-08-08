@@ -20,7 +20,7 @@ userRouter.post(
 );
 userRouter.post(
   "/login",
-  rateLimiter,
+  // rateLimiter, commented out for testing
   validateReqBody("email", "password"),
   login
 );

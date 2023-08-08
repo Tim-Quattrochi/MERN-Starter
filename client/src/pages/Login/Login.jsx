@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 const initialFormState = {
   email: "",
@@ -10,7 +11,10 @@ const Login = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const {
+    handleLogin,
+    authState: { isSubmitting },
+  } = useAuthContext();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,13 +24,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData.email, formData.password);
+      await handleLogin(formData.email, formData.password);
+
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
       setError(error.message || "Something went wrong.");
     }
   };
+
+  if (isSubmitting) return <LoadingSpinner />;
 
   return (
     <form onSubmit={handleSubmit}>

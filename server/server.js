@@ -14,6 +14,9 @@ const corsOptions = require("./config/corsOptions");
 
 const app = express();
 
+//DB connection
+connectDB();
+
 //Middlewares
 app.use(cors(corsOptions));
 app.use(morgan("dev")); //logging
@@ -23,9 +26,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-
-//DB connection
-connectDB();
 
 //routes
 app.use(`${API_URL}/auth`, userRouter);

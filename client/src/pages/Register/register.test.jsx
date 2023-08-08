@@ -2,12 +2,15 @@ import Register from "./Register";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { describe, it, expect } from "vitest";
+import { AuthProvider } from "../../hooks/useAuthProvider";
 
 describe("register test suite", () => {
   const renderRegister = () => {
     return render(
       <BrowserRouter>
-        <Register />
+        <AuthProvider>
+          <Register />
+        </AuthProvider>
       </BrowserRouter>
     );
   };

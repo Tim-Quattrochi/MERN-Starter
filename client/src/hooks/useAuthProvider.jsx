@@ -1,147 +1,78 @@
-import { createContext, useEffect, useReducer } from "react";
-import axios from "../hooks/useAxios";
+import { useEffect, useReducer, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { authReducer, initialState } from "../context/AuthReducer";
+import { handleDispatch } from "../utils/authUtils";
 import { APP_NAME } from "../config/constants";
 import { useNavigate } from "react-router-dom";
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+} from "../services/authService";
 
-export const AuthContext = createContext({});
-
-const authReducer = (state, action) => {
-  const { user, accessToken } = action.payload;
-
-  switch (action.type) {
-    case "LOGIN":
-      return {
-        ...state,
-        isAuthenticated: true,
-        user,
-        accessToken,
-      };
-    case "REGISTER":
-      return {
-        ...state,
-        isAuthenticated: true,
-        user,
-        accessToken: accessToken,
-      };
-    case "LOGOUT":
-      return {
-        ...state,
-        isAuthenticated: false,
-        user: null,
-        accessToken: null,
-      };
-    case "UPDATE_ACCESS_TOKEN":
-      return {
-        ...state,
-        accessToken: action.payload,
-      };
-    default:
-      return state;
-  }
-};
-
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
-  const [authState, authDispatch] = useReducer(authReducer, {});
+  const [authState, authDispatch] = useReducer(
+    authReducer,
+    initialState
+  );
+  const [checking, setIsChecking] = useState(true); //checking if user is authenticated for private route
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const handleRegister = async (userDetails) => {
+    const { email, password } = userDetails;
+
     try {
-      const authValue = JSON.parse(
-        localStorage.getItem(`${APP_NAME}`)
-      );
-      if (authValue) {
-        authDispatch({ type: "LOGIN", payload: authValue });
-      }
+      await registerUser(userDetails, authDispatch);
+
+      //log the user in after successful registration
+
+      await handleLogin(email, password);
     } catch (error) {
       console.log(error);
     }
-  }, []);
-
-  const saveToLocal = (user, accessToken) => {
-    const dataToStore = { user, accessToken };
-    localStorage.setItem(`${APP_NAME}`, JSON.stringify(dataToStore));
   };
 
-  const register = async (userDetails) => {
-    const { password } = userDetails; //To log them in on line 85
-
+  const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post(
-        "/auth/register",
-        userDetails
-      );
-
-      if (response.status === 201) {
-        const { _id, name, email, accessToken } = response.data;
-        const userInfo = {
-          _id,
-          name,
-          email,
-        };
-        saveToLocal(userInfo, accessToken);
-        authDispatch({
-          type: "REGISTER",
-          payload: { user: userInfo, accessToken },
-        });
-
-        return await login(email, password);
-      }
+      await loginUser(email, password, authDispatch);
+      navigate("/dashboard");
     } catch (error) {
       console.log(error);
-      if (error.response || error.response.data) {
-        throw new Error(error.response.data.error);
-      } else {
-        throw error;
-      }
-    }
-  };
-
-  const login = async (email, password) => {
-    try {
-      const response = await axios.post("/auth/login", {
-        email,
-        password,
-      });
-
-      if (response.status === 200) {
-        const { _id, name, email, accessToken } = response.data;
-        const userInfo = { _id, name, email };
-        saveToLocal(userInfo, accessToken);
-        authDispatch({
-          type: "LOGIN",
-          payload: { user: userInfo, accessToken },
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      if (error.response || error.response.data) {
-        throw new Error(error.response.data.error);
-      } else {
-        throw error;
-      }
     }
   };
 
   const handleLogout = async () => {
     try {
-      await axios.post("/auth/logout");
-
-      localStorage.removeItem(`${APP_NAME}`);
-      authDispatch({ type: "LOGOUT", payload: authState.user });
-      // return navigate("/welcome");
+      logoutUser(authDispatch);
+      navigate("/welcome");
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    handleDispatch(authDispatch, "SET_IS_SUBMITTING", true);
+
+    const authValue = JSON.parse(localStorage.getItem(`${APP_NAME}`));
+    if (authValue) {
+      handleDispatch(authDispatch, "LOGIN", authValue);
+    } else {
+      handleDispatch(authDispatch, "LOGOUT", null);
+    }
+    handleDispatch(authDispatch, "SET_IS_SUBMITTING", false);
+    setIsChecking(false);
+  }, [authDispatch]);
 
   return (
     <AuthContext.Provider
       value={{
         authState,
         authDispatch,
-        register,
-        login,
+        handleRegister,
+        handleLogin,
         handleLogout,
+        checking,
       }}
     >
       {children}

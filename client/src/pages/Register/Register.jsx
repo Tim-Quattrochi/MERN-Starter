@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./register.css";
+import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 const initialFormState = {
   name: "",
@@ -12,8 +13,11 @@ const initialFormState = {
 
 const Register = () => {
   const [formData, setFormData] = useState(initialFormState);
-  const { register } = useAuthContext();
-  const navigate = useNavigate();
+  const {
+    handleRegister,
+    authState: { isSubmitting, errorMsg },
+  } = useAuthContext();
+
   const [errors, setErrors] = useState({}); // will store error messages
   const [touched, setTouched] = useState({}); //will track for client interaction
 
@@ -93,14 +97,16 @@ const Register = () => {
     ); //  all empty strings(no errors)
     if (isFormValid) {
       try {
-        await register(formData);
-        navigate("/dashboard");
+        await handleRegister(formData);
       } catch (error) {
+        console.log(error);
         // add server error
         setErrors({ ...errors, serverError: error.message });
       }
     }
   };
+
+  if (isSubmitting) return <LoadingSpinner />;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -162,6 +168,7 @@ const Register = () => {
       {errors.serverError && (
         <div className="errorMsg">{errors.serverError}</div>
       )}
+      {errorMsg && errorMsg}
     </form>
   );
 };
