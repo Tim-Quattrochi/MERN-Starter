@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useAuthContext from "../../hooks/useAuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LoadingSpinner from "../../components/Loading/LoadingSpinner";
 
 const initialFormState = {
@@ -10,7 +10,6 @@ const initialFormState = {
 const Login = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
   const {
     handleLogin,
     authState: { isSubmitting },
@@ -25,8 +24,6 @@ const Login = () => {
     e.preventDefault();
     try {
       await handleLogin(formData.email, formData.password);
-
-      navigate("/dashboard");
     } catch (error) {
       console.log(error);
       setError(error.message || "Something went wrong.");
