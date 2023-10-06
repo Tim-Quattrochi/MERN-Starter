@@ -23,6 +23,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      //On successful login, programmatically navigates to the dashboard.
+      //Any errors from the authService will be caught in the catch block.
       await handleLogin(formData.email, formData.password);
     } catch (error) {
       console.log(error);
