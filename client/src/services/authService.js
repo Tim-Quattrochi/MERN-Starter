@@ -2,8 +2,10 @@ import axios from "../hooks/useAxios";
 import { handleDispatch, saveToLocal } from "../utils/authUtils";
 import { APP_NAME } from "../config/constants";
 
+//This file holds all of the services for the AuthProvider such as register, login, and logout.
+//It is imported in the useAuthProvider hook.
+
 /**
- *
  * @param {Object} userDetails - the user details to be used for registration.
  * @param {Function} authDispatch -the dispatch function from the authReducer to update the state.
  * @returns {Promise<void>} - A promise that resolves when the registration is successful and the user is logged in.
