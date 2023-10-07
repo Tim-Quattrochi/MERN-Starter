@@ -3,6 +3,7 @@ import useAuthContext from "../../hooks/useAuthContext";
 import { Link } from "react-router-dom";
 import "./register.css";
 import LoadingSpinner from "../../components/Loading/LoadingSpinner";
+import { validateFields } from "../../utils/validation";
 
 const initialFormState = {
   name: "",
@@ -36,42 +37,13 @@ const Register = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  //---- Form validation logic for name, email, password, and confirmPassword
-
-  //validateFields function => performs form validation based on the entered data in formData,
-
-  const validateFields = (fieldName) => {
-    if (!formData[fieldName].trim() && touched[fieldName]) {
-      // if true, the field has been interacted with
-      return `${
-        fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
-      } is required.`;
-    } else if (
-      fieldName === "email" &&
-      touched.email &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
-      return "Please enter a valid email address.";
-    } else if (
-      fieldName === "password" &&
-      touched.password &&
-      formData.password.length < 7
-    ) {
-      return "Password must be at least 7 characters long.";
-    } else if (
-      fieldName === "confirmPassword" &&
-      touched.confirmPassword &&
-      formData.password !== formData.confirmPassword
-    ) {
-      return "Passwords do not match.";
-    }
-    return "";
-  };
-
   const handleInputBlur = (e) => {
     const { name } = e.target;
     setTouched({ ...touched, [name]: true });
-    setErrors({ ...errors, [name]: validateFields(name) }); //update with errors found
+    setErrors({
+      ...errors,
+      [name]: validateFields(name, touched, formData, "register"),
+    }); //update with errors found
   };
 
   const handleSubmit = async (e) => {
@@ -87,7 +59,12 @@ const Register = () => {
     // Validate all fields on form submission
     const newErrors = {};
     Object.keys(formData).forEach((fieldName) => {
-      newErrors[fieldName] = validateFields(fieldName);
+      newErrors[fieldName] = validateFields(
+        fieldName,
+        touched,
+        formData,
+        "register"
+      );
     });
     setErrors(newErrors);
 
