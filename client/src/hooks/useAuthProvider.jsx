@@ -4,11 +4,7 @@ import { authReducer, initialState } from "../context/AuthReducer";
 import { handleDispatch } from "../utils/authUtils";
 import { APP_NAME } from "../config/constants";
 import { useNavigate } from "react-router-dom";
-import {
-  loginUser,
-  logoutUser,
-  registerUser,
-} from "../services/authService";
+import * as authService from "../services/authService";
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
@@ -23,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     const { email, password } = userDetails;
 
     try {
-      await registerUser(userDetails, authDispatch);
+      await authService.registerUser(userDetails, authDispatch);
 
       //log the user in after successful registration
 
@@ -35,7 +31,8 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = async (email, password) => {
     try {
-      await loginUser(email, password, authDispatch);
+      await authService.loginUser(email, password, authDispatch);
+
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
@@ -44,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      logoutUser(authDispatch);
+      authService.logoutUser(authDispatch);
       navigate("/welcome");
     } catch (error) {
       console.log(error);
