@@ -6,7 +6,6 @@ import { APP_NAME } from "../config/constants";
 import { useNavigate } from "react-router-dom";
 import * as authService from "../services/authService";
 
-// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(
     authReducer,
