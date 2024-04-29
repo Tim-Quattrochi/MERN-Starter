@@ -2,7 +2,6 @@
   "name": "mern-template",
   "version": "1.0.0",
   "description": "A Mern template to get you up and running",
-  "main": "index.js",
   "workspaces": [
     "client",
     "server"
@@ -29,8 +28,7 @@
   },
   "homepage": "https://github.com/Tim-Quattrochi/MERN-Starter#readme",
   "dependencies": {
-    "concurrently": "^8.2.0",
-    "react-router-dom": "^6.14.2"
+    "concurrently": "^8.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
